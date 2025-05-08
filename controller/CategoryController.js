@@ -55,7 +55,8 @@ const updateCategory = async (request, response) => {
         $set: {
           categoryName: categoryName,
         },
-      }
+      },
+      {new:true}
     );
 
     return response.status(200).json({
