@@ -110,8 +110,7 @@ const findCategoryById = async (request, response) => {
       _id: request.params.id,
     });
 
-
-    if(categoryData){
+    if (categoryData) {
       return response.status(200).json({
         code: 200,
         message: "category data found",
@@ -124,8 +123,6 @@ const findCategoryById = async (request, response) => {
       message: "category data not found",
       data: null,
     });
-
-  
   } catch (e) {
     response
       .status(500)
@@ -135,7 +132,32 @@ const findCategoryById = async (request, response) => {
 
 //find all (GET)
 const findAllCategories = (request, response) => {
-  console.log(request.body);
+  try {
+    const { searchText, page = 1, size = 10 } = request.query;
+    const pageIndex = parseInt(page);
+    const pageSize = parseInt(size);
+
+    const query = {};
+
+    if (searchText) {
+      query.$text = { $search: searchText };
+    }
+
+    const skip = (pageIndex - 1) * pageSize;
+    const categoryList = CategorySchema.find(query).limit(pageSize).skip(skip);
+
+    const categoryListCount = CategorySchema.countDocuments(query);
+
+    return response.status(200).json({
+      code: 200,
+      message: "category data ..",
+      data: { list: categoryList, dataCount: categoryListCount },
+    });
+  } catch (error) {
+    response
+      .status(500)
+      .json({ code: 500, message: "something went wrong", data: error });
+  }
 };
 
 module.exports = {
