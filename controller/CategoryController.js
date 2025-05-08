@@ -28,7 +28,7 @@ const createCategory = async (request, response) => {
 
     return response.status(201).json({
       code: 201,
-      message: "customer has been saved...",
+      message: "Category has been saved...",
       data: saveData,
     });
   } catch (e) {
@@ -56,12 +56,12 @@ const updateCategory = async (request, response) => {
           categoryName: categoryName,
         },
       },
-      {new:true}
+      { new: true }
     );
 
     return response.status(200).json({
       code: 200,
-      message: "customer has been updated...",
+      message: "Category has been updated...",
       data: updateData,
     });
   } catch (e) {
@@ -74,22 +74,20 @@ const updateCategory = async (request, response) => {
 //delete (DELETE)
 const deleteCategory = async (request, response) => {
   try {
-    
-
     if (!request.params.id) {
       return response
         .status(400)
         .json({ code: 400, message: "Some fields are missing", data: null });
     }
 
-    const deletedData = await CategorySchema.findOneAndDelete(
-      { _id: request.params.id },
-    
-    );
+    const deletedData = await CategorySchema.findOneAndDelete({
+      _id: request.params.id,
+    });
 
-    return response.status(204).json({  // 204 means No content
+    return response.status(204).json({
+      // 204 means No content
       code: 204,
-      message: "customer has been deleted...",
+      message: "Category has been deleted...",
       data: deletedData,
     });
   } catch (e) {
@@ -100,8 +98,39 @@ const deleteCategory = async (request, response) => {
 };
 
 //find by id (GET)
-const findCategoryById = (request, response) => {
-  console.log(request.body);
+const findCategoryById = async (request, response) => {
+  try {
+    if (!request.params.id) {
+      return response
+        .status(400)
+        .json({ code: 400, message: "Some fields are missing", data: null });
+    }
+
+    const categoryData = await CategorySchema.findById({
+      _id: request.params.id,
+    });
+
+
+    if(categoryData){
+      return response.status(200).json({
+        code: 200,
+        message: "category data found",
+        data: categoryData,
+      });
+    }
+
+    return response.status(404).json({
+      code: 404,
+      message: "category data not found",
+      data: null,
+    });
+
+  
+  } catch (e) {
+    response
+      .status(500)
+      .json({ code: 500, message: "something went wrong", data: e });
+  }
 };
 
 //find all (GET)
